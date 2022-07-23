@@ -1,0 +1,32 @@
+{
+  "name": "node-express-sequelize-example",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Simple Node Express server that provides an API using data from Mongo",
+  "repository": "https://github.com/jessamynsmith/node-express-sequelize-example",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1",
+    "pg": "^8.7.3",
+    "sequelize": "^6.21.3"
+  },
+  "devDependencies": {
+    "jshint": "^2.8.0",
+    "sequelize-cli": "^6.4.1"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express",
+    "postgresql",
+    "sequelize"
+  ]
+}
