@@ -45,4 +45,4 @@ Use Heroku for deployment
     git push heroku main
 
     heroku run npx sequelize-cli db:migrate
-    npx sequelize-cli db:seed:all
+    heroku run npx sequelize-cli db:seed:all
