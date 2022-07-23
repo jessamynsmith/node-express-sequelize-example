@@ -41,3 +41,8 @@ Use Heroku for deployment
     heroku create <your_app_name>
 
     heroku addons:create heroku-postgresql:hobby-dev
+
+    git push heroku main
+
+    heroku run npx sequelize-cli db:migrate
+    npx sequelize-cli db:seed:all
