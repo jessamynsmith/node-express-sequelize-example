@@ -1,29 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
 
-const cryptoJS = require("crypto-js");
+const { encrypt, decrypt } = require('../helpers/encryption');
 
-const AES = cryptoJS.AES;
-const enc = cryptoJS.enc;
-
-// To generate KEY and IV:
-// const crypto = require("crypto");
-// crypto.randomBytes(64).toString("base64");
-
-const KEY = enc.Utf8.parse(process.env.KEY);
-const IV = enc.Utf8.parse(process.env.IV);
-
-
-const encrypt = plainText => {
-  const AESCipher = AES.encrypt(plainText, KEY, { iv: IV });
-  return AESCipher.toString();
-};
-
-const decrypt = AESCipher => {
-  const AESCipherText = AES.decrypt(AESCipher, KEY, { iv: IV });
-  const text = AESCipherText.toString(enc.Utf8);
-  return text;
-};
 
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
@@ -38,14 +17,19 @@ module.exports = (sequelize, DataTypes) => {
   }
   Product.init({
     name: DataTypes.STRING,
-    code: DataTypes.STRING
+    code: DataTypes.STRING,
+    key: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Product',
+    encryptedFields: ['code', 'key'],
     hooks: {
       beforeFind: function(query) {
-        if (query && query.where && query.where.code) {
-          query.where.code = encrypt(query.where.code);
+        for (let i = 0; i < this.options.encryptedFields.length; i++) {
+          const propName = this.options.encryptedFields[i];
+          if (query && query.where && query.where[propName]) {
+            query.where[propName] = encrypt(query.where[propName]);
+          }
         }
       },
       afterFind: function(model) {
@@ -54,22 +38,33 @@ module.exports = (sequelize, DataTypes) => {
           if (data.constructor !== Array) {
             data = [data];
           }
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].dataValues) {
-              const decryptedValue = decrypt(data[i].dataValues.code);
-              data[i].dataValues.code = decryptedValue;
-            } else {
-              data[i].code = decrypt(data[i].code);
+          
+          for (let i = 0; i < this.options.encryptedFields.length; i++) {
+            const propName = this.options.encryptedFields[i];
+            
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].dataValues) {
+                const decryptedValue = decrypt(data[i].dataValues[propName]);
+                data[i].dataValues[propName] = decryptedValue;
+              } else {
+                data[i][propName] = decrypt(data[i][propName]);
+              }
             }
           }
         }
       },
       beforeCreate: function(model) {
-        const encryptedValue = encrypt(model.dataValues.code);
-        model.dataValues.code = encryptedValue;
+        for (let i = 0; i < this.options.encryptedFields.length; i++) {
+          const propName = this.options.encryptedFields[i];
+          const encryptedValue = encrypt(model.dataValues[propName]);
+          model.dataValues[propName] = encryptedValue;
+        }
       },
       afterCreate: function(model) {
-        model.dataValues.code = decrypt(model.dataValues.code);
+        for (let i = 0; i < this.options.encryptedFields.length; i++) {
+          const propName = this.options.encryptedFields[i];
+          model.dataValues[propName] = decrypt(model.dataValues[propName]);
+        }
       }
     }
   });
