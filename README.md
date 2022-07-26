@@ -1,6 +1,7 @@
 # node-express-sequelize-example
 
 Simple Node Express server that provides an API using data from Postgresql using Sequelize.
+Some data fields are encrypted before storing in the db, and decrypted before display.
 
 View the running app on [Heroku](https://node-express-sequelize-example.herokuapp.com/)
 
@@ -20,7 +21,13 @@ Fork on GitHub and clone your fork
     
     npm start
 
-Browse to the API at: http://127.0.0.1:5000/api/v1/products
+Browse to the API at: http://127.0.0.1:5001/api/v1/products
+
+### API examples
+
+    curl -vk -H "Content-Type: application/json" "http://127.0.0.1:5001/api/v1/products" 
+
+    curl -vk -X POST -H "Content-Type: application/json" --data '{"name": "test1", "code": "abc123"}' "http://127.0.0.1:5001/api/v1/products" 
 
 
 ## Continuous Integration

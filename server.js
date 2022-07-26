@@ -5,6 +5,7 @@ const express = require('express');
 const { Product } = require('./models');
 
 const app = express();
+app.use(express.json());
 
 // CORS (Cross-Origin Resource Sharing) headers to support Cross-site HTTP requests
 app.all('*', function(req, res, next) {
@@ -14,11 +15,19 @@ app.all('*', function(req, res, next) {
 });
 
 // API Routes
-app.get('/api/v1/products', async function(request, response) {
+app.post('/api/v1/products', async function(request, response) {
+  const product = await Product.create(request.body);
+  response.send(product);
+});
 
+app.get('/api/v1/products', async function(request, response) {
   const products = await Product.findAll();
   response.send(products);
+});
 
+app.get('/api/v1/products/:productId', async function(request, response) {
+  const products = await Product.findOne({id: request.params.productId});
+  response.send(products);
 });
 
 app.get('*', function(req, res) {
