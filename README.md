@@ -25,10 +25,13 @@ Browse to the API at: http://127.0.0.1:5001/api/v1/products
 
 ### API examples
 
-    curl -vk -H "Content-Type: application/json" "http://127.0.0.1:5001/api/v1/products" 
+    curl -vk -H "Content-Type: application/json" "http://127.0.0.1:5001/api/v1/products"
+
+    curl -vk -H "Content-Type: application/json" "http://127.0.0.1:5001/api/v1/products/1" 
 
     curl -vk -X POST -H "Content-Type: application/json" --data '{"name": "test1", "code": "abc123"}' "http://127.0.0.1:5001/api/v1/products" 
 
+    curl -vk -X DELETE -H "Content-Type: application/json" "http://127.0.0.1:5001/api/v1/products/1" 
 
 ## Continuous Integration
 

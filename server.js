@@ -26,8 +26,13 @@ app.get('/api/v1/products', async function(request, response) {
 });
 
 app.get('/api/v1/products/:productId', async function(request, response) {
-  const products = await Product.findOne({id: request.params.productId});
-  response.send(products);
+  const product = await Product.findOne({id: request.params.productId});
+  response.send(product);
+});
+
+app.delete('/api/v1/products/:productId', async function(request, response) {
+  await Product.destroy({ where: {id: request.params.productId}});
+  response.send({message: `deleted ${request.params.productId}`});
 });
 
 app.get('*', function(req, res) {
